@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const memoryLead = require("./memoryLead");
+
+const useMemoryDb = process.env.USE_MEMORY_DB === "true" || !process.env.MONGO_URI;
 
 const leadSchema = new mongoose.Schema({
   name: {
@@ -29,4 +32,5 @@ const leadSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Lead", leadSchema);
+// Export the in-memory store when no MongoDB is configured so the API still runs.
+module.exports = useMemoryDb ? memoryLead : mongoose.model("Lead", leadSchema);
